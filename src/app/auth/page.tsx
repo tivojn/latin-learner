@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -21,6 +21,16 @@ function AuthForm() {
   const redirect = searchParams.get('redirect') || '/dashboard'
 
   const supabase = createClient()
+
+  // Check for recovery token in URL hash and redirect to reset password page
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash && hash.includes('type=recovery')) {
+      // Supabase will handle the token exchange automatically
+      // Redirect to the reset password page
+      router.push('/auth/reset-password' + hash)
+    }
+  }, [router])
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
